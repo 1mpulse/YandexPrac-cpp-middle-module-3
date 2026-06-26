@@ -10,8 +10,38 @@ enum class Genre { Fiction, NonFiction, SciFi, Biography, Mystery, Unknown };
 
 // Ваш код для constexpr преобразования строк в enum::Genre и наоборот здесь
 
-constexpr Genre GenreFromString(std::string_view s) {
-    // Ваш код здесь
+constexpr Genre GenreFromString(std::string_view s)
+{
+    if (s == "Fiction")
+    {
+        return Genre::Fiction;
+    }
+
+    if (s == "NonFiction")
+    {
+        return Genre::NonFiction;
+    }
+
+    if (s == "SciFi")
+    {
+        return Genre::SciFi;
+    }
+
+    if (s == "Biography")
+    {
+        return Genre::Biography;
+    }
+
+    if (s == "Mystery")
+    {
+        return Genre::Mystery;
+    }
+
+    if (s == "Unknown")
+    {
+        return Genre::Unknown;
+    }
+
     return Genre::Unknown;
 }
 
@@ -26,6 +56,23 @@ struct Book {
     int read_count;
 
     // Ваш код для конструкторов здесь
+    constexpr Book(std::string_view author_, std::string_view title_, int year_, Genre genre_, double rating_, int read_count_)
+        : author(author_), title(title_), year(year_), genre(genre_), rating(rating_), read_count(read_count_) {
+    }
+
+    constexpr Book(std::string_view author_,
+                   std::string_view title_,
+                   int year_,
+                   std::string_view genre_,
+                   double rating_,
+                   int read_count_)
+        : author(author_),
+          title(title_),
+          year(year_),
+          genre(GenreFromString(genre_)),
+          rating(rating_),
+          read_count(read_count_) {
+    }
 };
 }  // namespace bookdb
 
@@ -58,5 +105,26 @@ struct formatter<bookdb::Genre, char> {
 };
 
 // Ваш код для std::formatter<Book> здесь
+template <>
+struct formatter<bookdb::Book, char>
+{
+    template <typename FormatContext>
+    auto format(const bookdb::Book &book, FormatContext &fc) const
+    {
+        return format_to(fc.out(),
+            "{{title: \"{}\", author: \"{}\", year: {}, genre: {}, rating: {}, read_count: {}}}",
+            book.title,
+            book.author,
+            book.year,
+            book.genre,
+            book.rating,
+            book.read_count);
+    }
+
+    constexpr auto parse(format_parse_context &ctx)
+    {
+        return ctx.begin();
+    }
+};
 
 }  // namespace std
