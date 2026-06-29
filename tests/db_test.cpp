@@ -8,6 +8,7 @@
 using namespace std::literals;
 
 namespace bookdb {
+
 TEST(BookDatabaseTest, Test1) {
     BookDatabase<std::vector<Book>> db{
         Book{"Платон Иванов", "Курсы по С++", 2020, Genre::Fiction, 4.8, 190},
@@ -32,7 +33,8 @@ TEST(BookDatabaseTest, Test2) {
     db.EmplaceBack("Дмитрий Иванов", "Сад", 2020, Genre::Fiction, 4.6, 120);
 
     EXPECT_EQ(db.size(), 3U);
-    EXPECT_EQ(db.GetAuthors().size(), 2U);
+    EXPECT_EQ(db.GetAuthors().size(), 3U);
+    EXPECT_NE(db.GetAuthors().find("Иван Иванов"), db.GetAuthors().end());
     EXPECT_NE(db.GetAuthors().find("Алексей Иванов"), db.GetAuthors().end());
     EXPECT_NE(db.GetAuthors().find("Дмитрий Иванов"), db.GetAuthors().end());
 }

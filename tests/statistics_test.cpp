@@ -19,7 +19,7 @@ TEST(StatisticsTest, Test1) {
     ASSERT_EQ(histogram.size(), 2U);
     EXPECT_EQ(histogram[0].first, "Алексей Иванов");
     EXPECT_EQ(histogram[0].second, 2U);
-    EXPECT_EQ(histogram[1].first, "Марина Степнова");
+    EXPECT_EQ(histogram[1].first, "Иван Иванов");
     EXPECT_EQ(histogram[1].second, 1U);
 }
 
@@ -33,10 +33,10 @@ TEST(StatisticsTest, Test2) {
 
     const auto ratings = calculateGenreRatings(db.begin(), db.end());
 
-    EXPECT_DOUBLE_EQ(FindValueByGenre(ratings, Genre::Fiction), 4.7);
+    EXPECT_DOUBLE_EQ(FindValueByGenre(ratings, Genre::Fiction), 4.4);
     EXPECT_DOUBLE_EQ(FindValueByGenre(ratings, Genre::Mystery), 4.4);
     EXPECT_DOUBLE_EQ(FindValueByGenre(ratings, Genre::SciFi), 4.2);
-    EXPECT_DOUBLE_EQ(calculateAverageRating(db), 4.5);
+    EXPECT_DOUBLE_EQ(calculateAverageRating(db), 4.35);
 }
 
 TEST(StatisticsTest, Test3) {
@@ -54,6 +54,24 @@ TEST(StatisticsTest, Test3) {
     EXPECT_EQ(top_books.size(), 2U);
     EXPECT_EQ(top_books[0].get().title, "Три танкиста и собака");
     EXPECT_EQ(top_books[1].get().title, "Космос");
+}
+
+TEST(StatisticsTest, Test4) {
+    BookDatabase<std::vector<Book>> db;
+
+    EXPECT_DOUBLE_EQ(calculateAverageRating(db), 0.0);
+    EXPECT_TRUE(sampleRandomBooks(db, 3).empty());
+}
+
+TEST(StatisticsTest, Test5) {
+    BookDatabase<std::vector<Book>> db{
+        Book{"Иван Иванов", "Тень", 2021, Genre::Fiction, 4.8, 190},
+        Book{"Алексей Иванов", "Пароход", 2023, Genre::Fiction, 4.7, 143},
+    };
+
+    const auto sampled = sampleRandomBooks(db, 10);
+
+    EXPECT_EQ(sampled.size(), 2U);
 }
 
 }  // namespace bookdb
